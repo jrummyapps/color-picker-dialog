@@ -51,6 +51,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.graphics.ColorUtils;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import java.util.Arrays;
 import java.util.Locale;
 
@@ -184,12 +187,13 @@ public class ColorPickerDialog extends DialogFragment implements ColorPickerView
       selectedButtonStringRes = R.string.cpv_select;
     }
 
-    AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity()).setView(rootView)
+    MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity()).setView(rootView)
         .setPositiveButton(selectedButtonStringRes, new DialogInterface.OnClickListener() {
           @Override public void onClick(DialogInterface dialog, int which) {
             onColorSelected(color);
           }
-        });
+        })
+        .setNegativeButton(R.string.cpv_reset, null);
 
     int dialogTitleStringRes = getArguments().getInt(ARG_DIALOG_TITLE);
     if (dialogTitleStringRes != 0) {
@@ -242,6 +246,38 @@ public class ColorPickerDialog extends DialogFragment implements ColorPickerView
               ((Button) v).setText(presetsButtonStringRes != 0 ? presetsButtonStringRes : R.string.cpv_presets);
               rootView.addView(createPickerView());
           }
+        }
+      });
+    }
+
+    Button negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+    if (negativeButton != null) {
+      negativeButton.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+          new MaterialAlertDialogBuilder(requireActivity())
+                  .setTitle(R.string.cpv_confirm)
+                  .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                      if (colorPickerDialogListener != null) {
+                        Log.w(TAG, "Using deprecated listener which may be remove in future releases");
+                        colorPickerDialogListener.onColorReset(dialogId);
+                        return;
+                      }
+
+                      Activity activity = getActivity();
+                      if (activity instanceof ColorPickerDialogListener) {
+                        ((ColorPickerDialogListener) activity).onColorReset(dialogId);
+                      } else {
+                        throw new IllegalStateException("The activity must implement ColorPickerDialogListener");
+                      }
+
+                      ColorPickerDialog.this.dismiss();
+                    }
+                  })
+                  .setNegativeButton(android.R.string.no, null)
+                  .show();
         }
       });
     }

@@ -75,6 +75,18 @@ Download [the latest AAR](https://repo1.maven.org/maven2/com/jaredrummler/colorp
 implementation 'com.jaredrummler:colorpicker:1.1.0'
 ```
 
+---
+
+## v7 Preference Support Library
+
+If you are using the v7 Preference Support Library you should use this in your `build.gradle` instead:
+
+```groovy
+implementation 'com.jaredrummler:colorpicker-compat:1.0.5'
+```
+
+Note: The demo project uses the v7 Preference Support Library
+
 ## License
 
     Licensed under the Apache License, Version 2.0 (the "License");

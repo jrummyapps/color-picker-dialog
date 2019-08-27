@@ -1,5 +1,9 @@
 apply plugin: 'com.android.application'
 
+apply plugin: 'com.github.dcendents.android-maven'
+
+group='com.github.zacharee'
+
 android {
   compileSdkVersion buildConfig.compileSdk
   defaultConfig {
@@ -22,6 +26,7 @@ android {
 }
 
 dependencies {
+  implementation project(':library_compat')
   implementation deps.androidx.appCompat
   implementation deps.androidx.preferences
   implementation project(':library')
